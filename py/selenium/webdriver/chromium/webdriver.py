@@ -15,6 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
+import sys
 import warnings
 
 from selenium.webdriver.chromium.remote_connection import ChromiumRemoteConnection
@@ -69,6 +70,8 @@ class ChromiumDriver(RemoteWebDriver):
             else:
                 desired_capabilities.update(options.to_capabilities())
 
+        self.vendor_prefix = vendor_prefix
+
         if service is None:
             raise AttributeError('service cannot be None')
 
@@ -86,6 +89,7 @@ class ChromiumDriver(RemoteWebDriver):
         except Exception:
             self.quit()
             raise
+        if
         self._is_remote = False
 
     def launch_app(self, id):
@@ -198,3 +202,14 @@ class ChromiumDriver(RemoteWebDriver):
 
     def create_options(self):
         pass
+
+    async def get_devtools(self):
+        assert sys.version_info >= (3, 6)
+
+        import contextvars
+        from selenium.webdriver.support.cdp import open_cdp
+
+        ws_url = self.capabilities.get(self.vendor_prefix["debuggerAddress"])
+        async with open_cdp(ws_url) as conn:
+            from selenium.webdriver.support.devtools import target
+

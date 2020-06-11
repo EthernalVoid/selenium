@@ -110,6 +110,32 @@ py_library(
     ],
 )
 
+genrule(
+    name="create-cdp-srcs",
+    srcs=[
+        ":browser_protocol",
+        ":js_protocol",
+        ":selenium-pkg",
+    ],
+    outs=["cdp"],
+    cmd="python $(location generate.py) $@",
+    tools=[
+        "/py/selenium/webdriver/generate.py",
+    ],
+)
+
+copy_file(
+    name="browser_protocol",
+    src="//common/devtools:browser_protocol.json",
+    out="browser_protocol.json",
+)
+
+copy_file(
+    name="js_protocol",
+    src="//common/devtools:js_protocol.json",
+    out="js_protocol.json",
+)
+
 py_test_suite(
     name = "unit",
     size = "small",
